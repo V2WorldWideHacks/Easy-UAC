@@ -7,7 +7,7 @@ function Easy-UAC {
 		$Command,
 		[Parameter(Mandatory = $false, Position = 1)]
 		[bool]
-		$Hidden
+		$Hidden = $false
 	)
 	powershell -WindowStyle Hidden -c ""
 	if ($Hidden) {$hide = "-WindowStyle Hidden"} else {$hide = ""}
