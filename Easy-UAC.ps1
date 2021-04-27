@@ -6,16 +6,20 @@ function Easy-UAC {
 		[string]
 		$Command,
 		[Parameter(Mandatory = $false, Position = 1)]
-		[bool]
-		$Hidden = $false,
+		[switch]
+		$Hidden,
 		[Parameter(Mandatory = $false, Position = 2)]
-		[bool]
-		$Exit = $true
+		[switch]
+		$NoExitHost,
+		[Parameter(Mandatory = $false, Position = 3)]
+		[switch]
+		$NoExitChild
 	)
-	if ($Hidden) {powershell -WindowStyle Hidden -c ""; $hide = "-WindowStyle Hidden"} else {$hide = ""}
+	if ($Hidden) {powershell -WindowStyle Hidden -c ""; $hide = "powershell -WindowStyle Hidden  -c ''"} else {$hide = ""}
+	if ($NoExitChild) {$end = "pause"} else {$end = "Exit;Exit;Exit"}
 	$encCommand = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($Command))
 	$Path = $env:TEMP + '\A.bat'
-	$Value = "powershell $hide -c '';Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command';Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User);powershell ([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('" + $encCommand + "')));pause"
+	$Value = "$hide;Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command';Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User);powershell ([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('" + $encCommand + "')));$end"
 	[System.Environment]::SetEnvironmentVariable('A', $Value, [System.EnvironmentVariableTarget]::User)
 	New-Item -Path $Path -Value '%A%'
 	New-Item "HKCU:\Software\Classes\Folder\shell\open\command" -Force -Value $Path
@@ -25,5 +29,5 @@ function Easy-UAC {
 	Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command'
 	[System.Environment]::SetEnvironmentVariable('A', '',[System.EnvironmentVariableTarget]::User)
 	Remove-Item $Path
-	if ($Exit) {Exit;Exit;Exit}
+	if (!$NoExitHost) {Exit;Exit;Exit}
 }
